@@ -2,6 +2,9 @@ from turtle import Turtle
 
 START_POSITIONS = [(0,0), (-20,0), (-40,0)]
 MOVE_DISTANCE = 20
+# The window edge is near ±300. A segment is 20px wide, so 280 is the
+# last center that stays fully inside the wall.
+WALL_LIMIT = 280
 
 
 class Snake():
@@ -14,6 +17,14 @@ class Snake():
     def create_snake(self):
         for position in START_POSITIONS:
             self.create_parts(position)
+
+    def reset(self):
+        for segment in self.segments:
+            segment.goto(1000, 1000)
+            segment.hideturtle()
+        self.segments.clear()
+        self.create_snake()
+        self.head = self.segments[0]
     
     def create_parts(self, position):
         snake_part = Turtle("square")
@@ -29,6 +40,20 @@ class Snake():
         for part_num in range(len(self.segments)-1, 0, -1):
             self.segments[part_num].goto(self.segments[part_num - 1].pos()) 
         self.head.forward(MOVE_DISTANCE)
+
+    def will_hit_wall(self):
+        x = self.head.xcor()
+        y = self.head.ycor()
+        heading = self.head.heading()
+        if heading == 0:
+            x += MOVE_DISTANCE
+        elif heading == 180:
+            x -= MOVE_DISTANCE
+        elif heading == 90:
+            y += MOVE_DISTANCE
+        elif heading == 270:
+            y -= MOVE_DISTANCE
+        return x > WALL_LIMIT or x < -WALL_LIMIT or y > WALL_LIMIT or y < -WALL_LIMIT
     
     def turn_left(self):
         if self.head.heading() != 0:

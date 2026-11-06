@@ -20,6 +20,11 @@ class Score(Turtle):
     def game_over(self):
         self.goto(0, 0)
         self.write("GAME OVER", align="center", font=FONT)
+
+    def reset(self):
+        self.score = 0
+        self.goto(0, 280)
+        self.score_count()
         
         
         
